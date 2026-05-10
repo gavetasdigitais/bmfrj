@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acervo de Economia e Governo</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 20px; background: #f5f5f5; }
+        h1 { color: #333; text-align: center; margin-bottom: 30px; }
+        .busca { display: flex; gap: 10px; margin-bottom: 30px; }
+        .busca input { flex: 1; padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 5px; }
+        .busca button { padding: 12px 25px; font-size: 16px; background: #3ecf8e; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .resultado { background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .resultado h3 { color: #555; font-size: 14px; margin-bottom: 8px; }
+        .resultado .conteudo { color: #333; line-height: 1.5; margin-bottom: 10px; }
+        .resultado .link { color: #3ecf8e; text-decoration: none; }
+        .resultado .periodico { color: #888; font-style: italic; margin-bottom: 5px; }
+        .erro { color: #e74c3c; text-align: center; }
+        .carregando { text-align: center; color: #888; }
+        .contador { text-align: center; color: #888; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Acervo BMF-RJ</h1>
+    
+    <div class="busca">
+        <input type="text" id="palavra" placeholder="Digite uma palavra-chave..." 
+               onkeypress="if(event.key==='Enter') buscar()">
+        <button onclick="buscar()">Buscar</button>
+    </div>
+    
+    <div id="contador" class="contador"></div>
+    <div id="resultados"></div>
+
+    <script>
+        const SUPABASE_URL = "https://oxllrcnywpyeuwhakqsi.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bGxyY255d3B5ZXV3aGFrcXNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4MjkxMTYsImV4cCI6MjA5MDQwNTExNn0.0dvk9wYGc9kQpleT1DATRBT6xCPS2L_JXT3B-A1pQ24"; // Cole aqui a chave anon/public
+        
+        async function buscar() {
+            const palavra = document.getElementById('palavra').value.trim();
+            if (!palavra) return;
+            
+            const divResultados = document.getElementById('resultados');
+            const divContador = document.getElementById('contador');
+            
+            divResultados.innerHTML = '<p class="carregando">Buscando...</p>';
+            divContador.innerHTML = '';
+            
+            try {
+                const resposta = await fetch(
+                    `${SUPABASE_URL}/rest/v1/rpc/busca_publica?palavra_chave=${encodeURIComponent(palavra)}`,
+                    {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
+                    }
+                );
+                
+                const dados = await resposta.json();
+                
+                if (dados.length === 0) {
+                    divResultados.innerHTML = '<p style="text-align:center">Nenhum resultado encontrado.</p>';
+                    return;
+                }
+                
+                divContador.innerHTML = `${dados.length} resultado(s) encontrado(s)`;
+                
+                let html = '';
+                dados.forEach(item => {
+                    html += '<div class="resultado">';
+                    
+                    if (item["Periódico"]) {
+                        html += `<p class="periodico">📰 ${item["Periódico"]}</p>`;
+                    }
+                    
+                    html += `<p class="conteudo"><strong>Conteúdo extraído do cartão:</strong><br>${item["Conteúdo extraído do cartão"]}</p>`;
+                    
+                    if (item["Imagem do cartão"]) {
+                        html += `<p><a class="link" href="${item["Imagem do cartão"]}" target="_blank">🖼️ Imagem do cartão</a></p>`;
+                    }
+                    
+                    html += '</div>';
+                });
+                
+                divResultados.innerHTML = html;
+                
+            } catch (erro) {
+                divResultados.innerHTML = '<p class="erro">Erro ao buscar. Tente novamente.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
