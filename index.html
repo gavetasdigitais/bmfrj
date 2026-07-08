@@ -16,6 +16,7 @@
         .busca button:hover { background: #35b87a; }
         .resultado { background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .resultado .periodico { color: #888; font-style: italic; margin-bottom: 8px; font-size: 14px; }
+        .resultado .autor { color: #555; font-size: 14px; margin-bottom: 8px; }
         .resultado .conteudo { color: #333; line-height: 1.6; margin-bottom: 10px; }
         .resultado .conteudo strong { color: #555; font-size: 13px; display: block; margin-bottom: 5px; }
         .resultado .link { color: #1a56db; text-decoration: underline; font-weight: 500; }
@@ -102,17 +103,25 @@
                 dados.forEach(item => {
                     html += '<div class="resultado">';
                     
-                    if (item.periodico) {
-                        html += `<p class="periodico">📰 ${item.periodico}</p>`;
+                    // Periódico
+                    if (item.periodico_nome) {
+                        html += `<p class="periodico">📰 ${item.periodico_nome}</p>`;
                     }
                     
+                    // Autor (NOVO)
+                    if (item.autor_nome) {
+                        html += `<p class="autor">✍️ Autor: ${item.autor_nome}</p>`;
+                    }
+                    
+                    // Conteúdo
                     html += `<div class="conteudo">`;
                     html += `<strong>Texto do cartão extraído por OCR:</strong>`;
-                    html += `${item["Texto do cartão extraído por OCR"]}`;
+                    html += `${item.mesclagem}`;
                     html += `</div>`;
                     
-                    if (item["Imagem do cartão"]) {
-                        html += `<p><a class="link" href="${item["Imagem do cartão"]}" target="_blank">🖼️ Ver imagem do cartão original</a></p>`;
+                    // Link da imagem
+                    if (item.link) {
+                        html += `<p><a class="link" href="${item.link}" target="_blank">🖼️ Ver imagem do cartão original</a></p>`;
                     }
                     
                     html += '</div>';
