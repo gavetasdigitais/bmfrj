@@ -15,7 +15,7 @@
         .busca button { padding: 12px 25px; font-size: 16px; background: #3ecf8e; color: white; border: none; border-radius: 5px; cursor: pointer; }
         .busca button:hover { background: #35b87a; }
         .resultado { background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .resultado .periodicos { color: #888; font-style: italic; margin-bottom: 8px; font-size: 14px; }
+        .resultado .periodico { color: #888; font-style: italic; margin-bottom: 8px; font-size: 14px; }
         .resultado .autor { color: #555; font-size: 14px; margin-bottom: 8px; }
         .resultado .conteudo { color: #333; line-height: 1.6; margin-bottom: 10px; }
         .resultado .conteudo strong { color: #555; font-size: 13px; display: block; margin-bottom: 5px; }
@@ -105,7 +105,7 @@
                     
                     // Periódico
                     if (item.periodico_nome) {
-                        html += `<p class="periodicos">📰 ${item.periodico_nome}</p>`;
+                        html += `<p class="periodico">📰 ${item.periodico_nome}</p>`;
                     }
                     
                     // Autor (NOVO)
